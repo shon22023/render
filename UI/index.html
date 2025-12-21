@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイムラプス勉強アプリ</title>
+</head>
+<body>
+    <header>
+        <button id="sideBarButton" class="sideBarButton">MENU</button>
+    </header>
+    <div class="mainContainer">
+         <video id="video" class="video" src="video.mp4" style="display: none;">ブラウザがビデオに対応していません！</video>
+          <canvas id="canvas" class="canvas" width="854" height="480"></canvas>
+            <button id="videoButton" class="videoButton">開始</button>
+            <button id="stopButton" class="stopButton">一時停止</button>
+
+             <dialog id="modal" class="modal">
+             <h2>録画方法を選択してください</h2>
+             <button id="cameraButton" class="cameraButton">カメラ</button>
+             <button id="screenButton" class="screenButton">画面</button>
+             <button id="pomoTimerButton" class="pomoTimerButton">ポモドーロ</button>
+             </dialog>
+          
+            <dialog id="waitVideo" class="waitVideo">
+                <h2>動画を処理しています...</h2>
+                 <div id="loading" class="loading">
+                    
+                 </div>
+            </dialog>
+      </div>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="timer.js"></script>
+    <script type="module" src="pomoTimer.js"></script>
+</body>
+</html>
