@@ -80,29 +80,23 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
 
     //FFmpegで倍速処理をする
      try {
+        // FFmpegコマンド（改行を削除し、パスに引用符を追加）
+        const cmd = `ffmpeg -y -i "${inputPath}" -filter:v "setpts=1/90*PTS" -an "${outputPath}"`;
+        
+        console.log("FFmpeg処理開始:", cmd);
+        await execFFmpeg(cmd); //FFmpegの倍速処理を実行する関数
+        
+        fs.unlinkSync(inputPath); //FFmpegの処理完了後、もと動画は削除します
+        console.log("チャンク処理完了:", outputPath);
 
-        const cmd = `
-        ffmpeg -y -i ${inputPath}
-        -filter:v "setpts=1/90*PTS"
-        -an
-        ${outputPath}
-      `;
-       await execFFmpeg(cmd); //FFmpegの倍速処理を実行する関数
-       fs.unlinkSync(inputPath); //FFmpegの処理完了後、もと動画は削除します
-
-       // 処理済み動画ファイルを返す
-       res.setHeader('Content-Type', 'video/mp4');
-       res.sendFile(path.resolve(outputPath), (err) => {
-           if (err) {
-               console.error("ファイル送信エラー:", err);
-               res.status(500).json({
-                   success: false,
-                   error: "Failed to send processed video"
-               });
-           }
-           // 送信完了後、処理済みファイルも削除（オプション）
-           // fs.unlinkSync(outputPath);
-       });
+        // JSON形式でレスポンスを返す
+        res.json({
+            success: true,
+            message: "Chunk processed successfully",
+            processedFile: path.basename(outputPath),
+            fileSize: fs.statSync(outputPath).size,
+            timestamp: new Date().toISOString()
+        });
 
      } catch(error) {
         console.error("FFmpeg処理エラー:", error);
