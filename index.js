@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-
 //============
 // chunk（動画）を一時的に保管して置くdir
 //===========
@@ -127,4 +126,3 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
 app.listen(PORT, () => {
     console.log(`FFmpeg server running on ${PORT}`);
   });
-
