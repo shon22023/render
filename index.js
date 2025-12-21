@@ -8,9 +8,14 @@ import fs from "fs";
 import path from "path";
 import { exec } from "child_process";
 import crypto from "crypto";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// CORS設定を追加
+app.use(cors());
+app.use(express.json());
 
 
 //============
@@ -60,6 +65,14 @@ function execFFmpeg(command) {
 // =====================
 
 app.post("/uploadVideo", upload.single("video"), async (req, res) => {
+    // ファイルがアップロードされていない場合のエラーハンドリング
+    if (!req.file) {
+        return res.status(400).json({
+            success: false,
+            error: "No video file uploaded"
+        });
+    }
+
     const inputPath = req.file.path; //倍速処理するファイルのパス
     const outputPath = path.join(
       UPLOADVIDEO,
@@ -76,24 +89,34 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
         ${outputPath}
       `;
        await execFFmpeg(cmd); //FFmpegの倍速処理を実行する関数
-       fs.unlinkSync(inputPath); //FFmpegの処理完了後、もと動画は速削除します
+       fs.unlinkSync(inputPath); //FFmpegの処理完了後、もと動画は削除します
 
-
-    res.json({
-        success: true,
-        processedFile: path.basename(outputPath)
-      });
+       // 処理済み動画ファイルを返す
+       res.setHeader('Content-Type', 'video/mp4');
+       res.sendFile(path.resolve(outputPath), (err) => {
+           if (err) {
+               console.error("ファイル送信エラー:", err);
+               res.status(500).json({
+                   success: false,
+                   error: "Failed to send processed video"
+               });
+           }
+           // 送信完了後、処理済みファイルも削除（オプション）
+           // fs.unlinkSync(outputPath);
+       });
 
      } catch(error) {
+        console.error("FFmpeg処理エラー:", error);
 
-    // 失敗時も動画は削除します。
-    if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+        // 失敗時も動画は削除します。
+        if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+        if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
-    res.status(500).json({
-      success: false,
-      error: "FFmpeg processing failed"
-    });
+        res.status(500).json({
+          success: false,
+          error: "FFmpeg processing failed",
+          details: error.toString()
+        });
      }
 
 });
