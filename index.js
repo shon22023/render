@@ -29,7 +29,7 @@ fs.mkdirSync(LAPSVIDEO, { recursive: true });
 // =====================
 
 const multerSnapShot = multer.diskStorage({
-     destination: UPLOADVIDEO,
+     destination: LAPSVIDEO,
      filename: (_, __, cb) => {
         const id = crypto.randomUUID();
         cb(null, `${id}.webm`);
