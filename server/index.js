@@ -24,12 +24,23 @@ app.use(express.json());
 const UPLOADVIDEO = "./video/uploadVideo";
 const LAPSVIDEO = "./video/lapsVideo";
 
-// ディレクトリが存在しない場合のみ作成
-if (!fs.existsSync(UPLOADVIDEO)) {
+// ディレクトリを作成（既に存在する場合はエラーを無視）
+try {
     fs.mkdirSync(UPLOADVIDEO, { recursive: true });
+} catch (error) {
+    // ディレクトリが既に存在する場合は無視
+    if (error.code !== 'EEXIST') {
+        throw error;
+    }
 }
-if (!fs.existsSync(LAPSVIDEO)) {
+
+try {
     fs.mkdirSync(LAPSVIDEO, { recursive: true });
+} catch (error) {
+    // ディレクトリが既に存在する場合は無視
+    if (error.code !== 'EEXIST') {
+        throw error;
+    }
 }
 
 
