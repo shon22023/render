@@ -21,8 +21,8 @@ app.use(express.json());
 // chunk（動画）を一時的に保管して置くdir
 //===========
 
-const UPLOADVIDEO = "./video/uploadVideo";
-const LAPSVIDEO = "./video/lapsVideo";
+const UPLOADVIDEO = "/tmp/uploadVideo";
+const LAPSVIDEO = "/tmp/lapsVideo";
 
 // #region agent log
 const cwd = process.cwd();
