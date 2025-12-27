@@ -24,8 +24,13 @@ app.use(express.json());
 const UPLOADVIDEO = "./video/uploadVideo";
 const LAPSVIDEO = "./video/lapsVideo";
 
-fs.mkdirSync(UPLOADVIDEO, { recursive: true });
-fs.mkdirSync(LAPSVIDEO, { recursive: true });
+// ディレクトリが存在しない場合のみ作成
+if (!fs.existsSync(UPLOADVIDEO)) {
+    fs.mkdirSync(UPLOADVIDEO, { recursive: true });
+}
+if (!fs.existsSync(LAPSVIDEO)) {
+    fs.mkdirSync(LAPSVIDEO, { recursive: true });
+}
 
 
 // =====================
