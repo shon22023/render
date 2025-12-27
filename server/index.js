@@ -24,10 +24,26 @@ app.use(express.json());
 const UPLOADVIDEO = "./video/uploadVideo";
 const LAPSVIDEO = "./video/lapsVideo";
 
+// #region agent log
+const cwd = process.cwd();
+const uploadVideoAbsolute = path.resolve(UPLOADVIDEO);
+const lapsVideoAbsolute = path.resolve(LAPSVIDEO);
+console.log('[DEBUG]', JSON.stringify({location:'server/index.js:27',message:'ディレクトリ作成前の状態',data:{cwd:cwd,UPLOADVIDEO:UPLOADVIDEO,LAPSVIDEO:LAPSVIDEO,uploadVideoAbsolute:uploadVideoAbsolute,lapsVideoAbsolute:lapsVideoAbsolute,uploadExists:fs.existsSync(uploadVideoAbsolute),lapsExists:fs.existsSync(lapsVideoAbsolute),uploadStat:fs.existsSync(uploadVideoAbsolute)?{isDirectory:fs.statSync(uploadVideoAbsolute).isDirectory(),isFile:fs.statSync(uploadVideoAbsolute).isFile()}:null,lapsStat:fs.existsSync(lapsVideoAbsolute)?{isDirectory:fs.statSync(lapsVideoAbsolute).isDirectory(),isFile:fs.statSync(lapsVideoAbsolute).isFile()}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'}));
+// #endregion
+
 // ディレクトリを作成（既に存在する場合はエラーを無視）
 try {
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:29',message:'UPLOADVIDEO mkdirSync実行前',data:{path:UPLOADVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    // #endregion
     fs.mkdirSync(UPLOADVIDEO, { recursive: true });
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:31',message:'UPLOADVIDEO mkdirSync成功',data:{path:UPLOADVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    // #endregion
 } catch (error) {
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:33',message:'UPLOADVIDEO mkdirSyncエラー',data:{path:UPLOADVIDEO,errorCode:error.code,errorMessage:error.message,errorStack:error.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'}));
+    // #endregion
     // ディレクトリが既に存在する場合は無視
     if (error.code !== 'EEXIST') {
         throw error;
@@ -35,8 +51,17 @@ try {
 }
 
 try {
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:38',message:'LAPSVIDEO mkdirSync実行前',data:{path:LAPSVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    // #endregion
     fs.mkdirSync(LAPSVIDEO, { recursive: true });
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:40',message:'LAPSVIDEO mkdirSync成功',data:{path:LAPSVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    // #endregion
 } catch (error) {
+    // #region agent log
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:42',message:'LAPSVIDEO mkdirSyncエラー',data:{path:LAPSVIDEO,errorCode:error.code,errorMessage:error.message,errorStack:error.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'}));
+    // #endregion
     // ディレクトリが既に存在する場合は無視
     if (error.code !== 'EEXIST') {
         throw error;
@@ -67,12 +92,11 @@ const upload = multer({ storage: multerSnapShot });
 function execFFmpeg(command) {
     return new Promise((resolve, reject) => {
       // #region agent log
-      const logPath = '/Users/handa/Library/Mobile Documents/com~apple~CloudDocs/タイムラプス/.cursor/debug.log';
-      fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:51',message:'execFFmpeg開始',data:{command:command},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+      console.log('[DEBUG]', JSON.stringify({location:'server/index.js:51',message:'execFFmpeg開始',data:{command:command},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
       // #endregion
       exec(command, (err, stdout, stderr) => {
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:53',message:'execFFmpegコールバック',data:{hasErr:!!err,errCode:err?.code,errMessage:err?.message,stderr:stderr?.substring(0,500),stdout:stdout?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:53',message:'execFFmpegコールバック',data:{hasErr:!!err,errCode:err?.code,errMessage:err?.message,stderr:stderr?.substring(0,500),stdout:stdout?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         if (err) return reject(stderr);
         resolve(stdout);
@@ -88,14 +112,13 @@ function execFFmpeg(command) {
 
 app.post("/uploadVideo", upload.single("video"), async (req, res) => {
     // #region agent log
-    const logPath = '/Users/handa/Library/Mobile Documents/com~apple~CloudDocs/タイムラプス/.cursor/debug.log';
-    fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:66',message:'/uploadVideoエンドポイント開始',data:{hasFile:!!req.file,fileSize:req.file?.size,fileName:req.file?.filename},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:66',message:'/uploadVideoエンドポイント開始',data:{hasFile:!!req.file,fileSize:req.file?.size,fileName:req.file?.filename},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
     // #endregion
     
     // ファイルがアップロードされていない場合のエラーハンドリング
     if (!req.file) {
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:69',message:'ファイル未アップロード',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:69',message:'ファイル未アップロード',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'}));
         // #endregion
         return res.status(400).json({
             success: false,
@@ -110,7 +133,7 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
     );
 
     // #region agent log
-    fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:75',message:'パス設定後',data:{inputPath:inputPath,outputPath:outputPath,inputExists:fs.existsSync(inputPath),inputSize:fs.existsSync(inputPath)?fs.statSync(inputPath).size:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})+'\n',{flag:'a'});
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:75',message:'パス設定後',data:{inputPath:inputPath,outputPath:outputPath,inputExists:fs.existsSync(inputPath),inputSize:fs.existsSync(inputPath)?fs.statSync(inputPath).size:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
     // #endregion
 
     //FFmpegで倍速処理をする
@@ -119,13 +142,13 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
         const cmd = `ffmpeg -y -i "${inputPath}" -filter:v "setpts=1/90*PTS" -an "${outputPath}"`;
         
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:84',message:'FFmpegコマンド実行前',data:{cmd:cmd},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:84',message:'FFmpegコマンド実行前',data:{cmd:cmd},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         console.log("FFmpeg処理開始:", cmd);
         await execFFmpeg(cmd); //FFmpegの倍速処理を実行する関数
         
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:87',message:'FFmpeg実行完了',data:{outputExists:fs.existsSync(outputPath),outputSize:fs.existsSync(outputPath)?fs.statSync(outputPath).size:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:87',message:'FFmpeg実行完了',data:{outputExists:fs.existsSync(outputPath),outputSize:fs.existsSync(outputPath)?fs.statSync(outputPath).size:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         
         fs.unlinkSync(inputPath); //FFmpegの処理完了後、もと動画は削除します
@@ -133,7 +156,7 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
 
         // JSON形式でレスポンスを返す
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:93',message:'成功レスポンス送信前',data:{processedFile:path.basename(outputPath),fileSize:fs.statSync(outputPath).size},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:93',message:'成功レスポンス送信前',data:{processedFile:path.basename(outputPath),fileSize:fs.statSync(outputPath).size},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         res.json({
             success: true,
@@ -145,7 +168,7 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
 
      } catch(error) {
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:101',message:'FFmpeg処理エラー',data:{errorMessage:error.toString(),errorStack:error.stack?.substring(0,500),inputExists:fs.existsSync(inputPath),outputExists:fs.existsSync(outputPath)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:101',message:'FFmpeg処理エラー',data:{errorMessage:error.toString(),errorStack:error.stack?.substring(0,500),inputExists:fs.existsSync(inputPath),outputExists:fs.existsSync(outputPath)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         console.error("FFmpeg処理エラー:", error);
 
@@ -154,7 +177,7 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
         if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
         // #region agent log
-        fs.writeFileSync(logPath, JSON.stringify({location:'server/index.js:108',message:'500エラーレスポンス送信',data:{error:error.toString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n',{flag:'a'});
+        console.log('[DEBUG]', JSON.stringify({location:'server/index.js:108',message:'500エラーレスポンス送信',data:{error:error.toString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
         // #endregion
         res.status(500).json({
           success: false,
