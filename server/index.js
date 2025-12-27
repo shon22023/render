@@ -31,41 +31,41 @@ const lapsVideoAbsolute = path.resolve(LAPSVIDEO);
 console.log('[DEBUG]', JSON.stringify({location:'server/index.js:27',message:'ディレクトリ作成前の状態',data:{cwd:cwd,UPLOADVIDEO:UPLOADVIDEO,LAPSVIDEO:LAPSVIDEO,uploadVideoAbsolute:uploadVideoAbsolute,lapsVideoAbsolute:lapsVideoAbsolute,uploadExists:fs.existsSync(uploadVideoAbsolute),lapsExists:fs.existsSync(lapsVideoAbsolute),uploadStat:fs.existsSync(uploadVideoAbsolute)?{isDirectory:fs.statSync(uploadVideoAbsolute).isDirectory(),isFile:fs.statSync(uploadVideoAbsolute).isFile()}:null,lapsStat:fs.existsSync(lapsVideoAbsolute)?{isDirectory:fs.statSync(lapsVideoAbsolute).isDirectory(),isFile:fs.statSync(lapsVideoAbsolute).isFile()}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'}));
 // #endregion
 
-// ディレクトリを作成（既に存在する場合はエラーを無視）
-try {
+// ディレクトリを作成（既に存在する場合はスキップ）
+// #region agent log
+console.log('[DEBUG]', JSON.stringify({location:'server/index.js:29',message:'UPLOADVIDEO 作成チェック開始',data:{path:UPLOADVIDEO,exists:fs.existsSync(UPLOADVIDEO)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'}));
+// #endregion
+
+if (!fs.existsSync(UPLOADVIDEO)) {
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:29',message:'UPLOADVIDEO mkdirSync実行前',data:{path:UPLOADVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:31',message:'UPLOADVIDEO mkdirSync実行',data:{path:UPLOADVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
     // #endregion
     fs.mkdirSync(UPLOADVIDEO, { recursive: true });
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:31',message:'UPLOADVIDEO mkdirSync成功',data:{path:UPLOADVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:33',message:'UPLOADVIDEO mkdirSync成功',data:{path:UPLOADVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
     // #endregion
-} catch (error) {
+} else {
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:33',message:'UPLOADVIDEO mkdirSyncエラー',data:{path:UPLOADVIDEO,errorCode:error.code,errorMessage:error.message,errorStack:error.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:35',message:'UPLOADVIDEO 既に存在するためスキップ',data:{path:UPLOADVIDEO,isDirectory:fs.statSync(UPLOADVIDEO).isDirectory()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'}));
     // #endregion
-    // ディレクトリが既に存在する場合は無視
-    if (error.code !== 'EEXIST') {
-        throw error;
-    }
 }
 
-try {
+// #region agent log
+console.log('[DEBUG]', JSON.stringify({location:'server/index.js:38',message:'LAPSVIDEO 作成チェック開始',data:{path:LAPSVIDEO,exists:fs.existsSync(LAPSVIDEO)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'}));
+// #endregion
+
+if (!fs.existsSync(LAPSVIDEO)) {
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:38',message:'LAPSVIDEO mkdirSync実行前',data:{path:LAPSVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:40',message:'LAPSVIDEO mkdirSync実行',data:{path:LAPSVIDEO,recursive:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
     // #endregion
     fs.mkdirSync(LAPSVIDEO, { recursive: true });
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:40',message:'LAPSVIDEO mkdirSync成功',data:{path:LAPSVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:42',message:'LAPSVIDEO mkdirSync成功',data:{path:LAPSVIDEO},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'}));
     // #endregion
-} catch (error) {
+} else {
     // #region agent log
-    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:42',message:'LAPSVIDEO mkdirSyncエラー',data:{path:LAPSVIDEO,errorCode:error.code,errorMessage:error.message,errorStack:error.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'}));
+    console.log('[DEBUG]', JSON.stringify({location:'server/index.js:44',message:'LAPSVIDEO 既に存在するためスキップ',data:{path:LAPSVIDEO,isDirectory:fs.statSync(LAPSVIDEO).isDirectory()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'}));
     // #endregion
-    // ディレクトリが既に存在する場合は無視
-    if (error.code !== 'EEXIST') {
-        throw error;
-    }
 }
 
 
