@@ -74,13 +74,14 @@ if (!fs.existsSync(LAPSVIDEO)) {
 // =====================
 
 const multerSnapShot = multer.diskStorage({
-     destination: LAPSVIDEO,
-     filename: (_, __, cb) => {
-        const id = crypto.randomUUID();
-        cb(null, `${id}.webm`);
-    }
+  destination: (req, file, cb) => {
+    cb(null, LAPSVIDEO);
+  },
+  filename: (_, __, cb) => {
+    const id = crypto.randomUUID();
+    cb(null, `${id}.webm`);
+  }
 });
-
 
 const upload = multer({ storage: multerSnapShot });
 
