@@ -21,8 +21,8 @@ app.use(express.json());
 // chunk（動画）を一時的に保管して置くdir
 //===========
 
-const UPLOADVIDEO = "./server/uploadVideo";
-const LAPSVIDEO = "./server/LAPSVIDEO";
+const UPLOADVIDEO = "./video/uploadVideo";
+const LAPSVIDEO = "./video/lapsVideo";
 
 fs.mkdirSync(UPLOADVIDEO, { recursive: true });
 fs.mkdirSync(LAPSVIDEO, { recursive: true });
