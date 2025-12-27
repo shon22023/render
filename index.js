@@ -139,7 +139,8 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
     //FFmpegで倍速処理をする
      try {
         // FFmpegコマンド（改行を削除し、パスに引用符を追加）
-        const cmd = `ffmpeg -y -i "${inputPath}" -filter:v "setpts=1/90*PTS" -an "${outputPath}"`;
+        // libx264は幅・高さが偶数である必要があるため、scaleで偶数に丸める（例: 621x1344 -> 620x1344）
+        const cmd = `ffmpeg -y -i "${inputPath}" -filter:v "setpts=1/90*PTS,scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p" -an "${outputPath}"`;
         
         // #region agent log
         console.log('[DEBUG]', JSON.stringify({location:'server/index.js:84',message:'FFmpegコマンド実行前',data:{cmd:cmd},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'}));
